@@ -1,0 +1,458 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://app.swaggerhub.com/apis/kodenixcompany/apidevelop/1.0.1-oas3'
+info:
+  description: This is a custom API
+  version: "1.0.1-oas3"
+  title: My Api
+  contact:
+    email: kodenix@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Partes
+    description: Partes calls
+  - name: Empleado
+    description: Empleado calls
+  - name: Authentification
+    description: Authentification calls
+  - name: Diario
+    description: Diario calls
+security:
+  - bearerAuth: [] 
+paths:
+  /diario:
+    get:
+      tags:
+        - Diario
+      summary: Obtener registros del diario
+      description: Buscar todos los registros
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#components/schemas/Diario'
+        '400':
+          $ref: '#/components/responses/400'
+  /partes:
+    get:
+      tags:
+        - Partes
+      summary: Get list of partes
+      description: You can search all partes
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Parte'
+        '400':
+          $ref: '#/components/responses/400'
+    post:
+      tags:
+        - Partes
+      summary: adds an parte item
+      description: Adds an item to the system
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Parte'
+        description: Parte params to send 
+        required: true
+  '/partes/{id}':
+    get:
+      tags:
+        - Partes
+      summary: Find partes by ID
+      description: Returns a single parte
+      parameters:
+        - name: id
+          in: path
+          description: ID of item to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parte'
+        '404':
+          $ref: '#/components/responses/404'
+    put:
+      tags:
+        - Partes
+      summary: Replaces a parte
+      parameters:
+        - name: id
+          in: path
+          description: ID of parte that needs to be updated
+          required: true
+          schema:
+            type: string
+      responses:
+        '405':
+          $ref: '#/components/responses/405'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Parte'
+        description: Parte object
+    delete:
+      tags:
+        - Partes
+      summary: Deletes a parte
+      parameters:
+        - name: id
+          in: path
+          description: Slug of the item to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+  /empleado:
+    get:
+      tags:
+        - Empleado
+      summary: Obtener lista de empleado
+      description: Se obtienen todos los empleados
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Empleado'
+        '400':
+          $ref: '#/components/responses/400'
+    post:
+      tags:
+        - Empleado
+      summary: Agregar un empleado
+      description: Agrega un empleado
+      responses:
+        '201':
+          $ref: '#/components/responses/201'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Empleado'
+        description: Extructura a enviar
+        required: true
+  /login:
+    post:
+      security: []
+      tags:
+        - Authentification
+      summary: adds an parte item
+      description: Adds an item to the system
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginData'
+        description: Login params to send
+        required: true
+components:
+  schemas:
+    Parte:
+      type: object
+      required:
+        - id_ruta
+        - tipo_parte
+        - estado
+        - fecha
+      properties:
+        id_parte:
+          type: string
+          example: PAR6745566
+        id_ruta:
+          type: string
+          example: RUT34345
+        tipo_parte:
+          type: string
+          example: DIARIO
+        estado:
+          type: string
+          example: abierto | cerrado
+        observaciones:
+          type: string
+          example: Observacion de ejemplo
+        fecha:
+          type: string
+          format: date
+          example: '2014-11-24'
+    Registro:
+      required:
+        - id
+        - id_ai
+        - fecha
+      type: object
+      properties:
+        id:
+          type: string
+        id_ai:
+          type: string
+        fecha:
+          type: string
+    AccountLogin:
+      type: object
+      properties:
+        username:
+          type: string
+          example: usuario1
+        email:
+          type: string
+          format: email
+          example: example@myemail.com
+        password:
+          type: string
+          format: password
+          example: passhashing
+        contratas_login:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Contrata'
+        id_empleado:
+          type: string
+          example: 2
+      required:
+        - username        
+        - email
+        - password
+        - codigo
+    Empleado:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        nombre:
+          type: string
+          example: Jhon
+        apellidos:
+          type: string
+          example: F. Jhonsson
+        codigo:
+          type: string
+          example: micodigotext
+        contrata_empleado:
+          type: object
+          $ref: '#/components/schemas/Contrata'
+        f_creacion:
+          type: string
+          format: date-time
+          example: 2017-04-23T23:03
+        f_actualizacion:
+          type: string
+          format: date-time
+          example: 2017-04-23T23:03
+        creado_por:
+          type: string
+          example: admin
+        actualizado_por:
+          type: string
+          example: admin
+        idioma:
+          type: string
+          example: es
+        reg_trayecto:
+          type: boolean
+          example: false
+        es_asignatario:
+          type: boolean
+          example: false
+        es_asignador:
+          type: boolean
+          example: false
+        android_profile:
+          type: object
+          example: {}
+      required:
+        - nombre
+        - apellidos
+        - codigo
+    Diario:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          example: 23
+        empleado:
+          type: object
+          $ref: '#/components/schemas/Empleado'
+        fecha_inicio:
+          type: string
+          format: date
+          example: 2017-02-01
+        fecha_fin:
+          type: string
+          format: date
+          example: 2017-02-20
+        hora_fin:
+          type: string
+          format: time
+        justificante:
+          type: object
+          $ref: '#/components/schemas/Justificante'
+    Justificante:
+      type: object
+      properties:
+        id: 
+          type: integer
+        nombre:
+          type: string
+    Contrata:
+      type: object
+      required:
+        - nombre
+      properties:
+        id:
+          type: integer
+          example: 32
+        nombre:
+          type: string
+          example: TrabajoX
+    LoginData:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+    Success:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+    '201':
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '405':
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '409':
+      description: an existing item already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  requestBodies:
+    Parte:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Parte'
+      description: Parte item to add
+    Usuario:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Empleado'
+      description: Empleado item to add
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
